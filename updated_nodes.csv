@@ -1,0 +1,13 @@
+Activity,Value_Chain_Position,Global_Competition_Intensity,Status,Knowledge_Intensity,Capital_Intensity,Labor_Intensity,Natural_Resources_Intensity,Intitution,Location,Ownership/ Funding,Volume in units,Labor requirement and status,Linkages with other support,Linkages with value chain activities,Launching schedule,Comments,Random_Column_10,Random_Column_11,Random_Column_12,Random_Column_13,Random_Column_14,Random_Column_15,Random_Column_16,Random_Column_17,Random_Column_18,Random_Column_19,Random_Column_20
+Materials suppliers,63,15,optimal,high,medium,medium,low,A,A,A,91,76,4,100,59,63,4,28,73,91,90,61,76,84,27,62,58
+Machinery suppliers,23,53,optimal,medium,medium,low,low,B,B,B,53,67,27,39,49,53,84,52,31,76,26,65,58,29,49,35,73
+Equipment suppliers,58,89,optimal,medium,high,medium,medium,C,C,C,23,6,33,29,52,62,78,4,94,8,75,34,100,15,38,57,79
+Superyacht design,81,10,underperforming,high,medium,medium,low,A,A,A,75,78,50,1,90,4,69,66,76,83,31,77,14,15,16,12,46
+Superyacht construction,43,89,optimal,high,high,high,medium,B,B,B,43,87,93,69,90,96,33,51,41,58,96,26,66,21,63,23,37
+Superyacht commissioning and decommissioning,64,45,optimal,medium,medium,medium,medium,C,C,C,9,3,84,58,57,72,71,94,47,79,4,99,30,68,74,33,74
+Superyacht brokerage,61,75,optimal,high,high,medium,medium,A,A,A,64,23,68,79,87,12,13,82,82,38,53,57,57,31,21,42,29
+Legal services,24,21,underperforming,medium,medium,medium,low,B,B,B,92,29,97,17,53,36,29,35,2,75,34,30,65,42,52,22,43
+Berth service/Dry dock,94,86,underperforming,medium,medium,medium,medium,C,C,C,96,52,71,28,11,34,80,47,57,8,69,58,71,46,51,27,34
+Superyacht management,85,68,optimal,medium,high,medium,medium,A,A,A,70,65,99,12,14,47,78,71,72,46,38,27,62,84,57,93,85
+Charter services,92,86,underperforming,medium,medium,medium,medium,B,B,B,48,7,25,76,33,73,4,14,52,68,74,12,9,98,16,9,34
+Superyacht operation,50,73,optimal,medium,medium,medium,medium,C,C,C,98,74,71,33,52,21,69,28,27,74,48,96,84,12,49,77,52

@@ -1,0 +1,17 @@
+Source,Target,Edge_Type
+Materials suppliers,Superyacht construction,Just in time
+Machinery suppliers,Superyacht construction,Just in time
+Equipment suppliers,Superyacht construction,Just in time
+Superyacht design,Superyacht construction,Made to order
+Superyacht construction,Superyacht commissioning and decommissioning,Made to order
+Superyacht construction,Superyacht brokerage,On stock
+Superyacht construction,Superyacht management,Just in time
+Superyacht brokerage,Superyacht management,On stock
+Superyacht brokerage,Legal services,Made to order
+Superyacht brokerage,Berth service/Dry dock,Just in time
+Superyacht management,Superyacht operation,Made to order
+Superyacht management,Crew provisioning,On stock
+Superyacht operation,Charter services,High info intensity
+Superyacht operation,Marina services,Low info intensity
+Superyacht operation,Nautical sports and activities,Missing or suboptimal
+Superyacht operation,Food and suppliers of different goods,Low info intensity
