@@ -531,45 +531,58 @@
         }
 
         function filterAndUpdate() {
-            const selectedStatus = d3.select("#statusFilter").property("value");
-            const selectedKnowledge = d3.select("#knowledgeFilter").property("value");
-            const selectedCapital = d3.select("#capitalFilter").property("value");
-            const selectedLabor = d3.select("#laborFilter").property("value");
-            const selectedNaturalResources = d3.select("#naturalResourcesFilter").property("value");
+    const selectedStatus = d3.select("#statusFilter").property("value");
+    const selectedKnowledge = d3.select("#knowledgeFilter").property("value");
+    const selectedCapital = d3.select("#capitalFilter").property("value");
+    const selectedLabor = d3.select("#laborFilter").property("value");
+    const selectedNaturalResources = d3.select("#naturalResourcesFilter").property("value");
 
-            let filteredNodes = nodesData;
+    // Step 1: Apply filters to nodes based on selected criteria
+    let filteredNodes = nodesData;
 
-            if (selectedStatus !== "all") {
-                filteredNodes = filteredNodes.filter(d => d.Status === selectedStatus);
-            }
+    if (selectedStatus !== "all") {
+        filteredNodes = filteredNodes.filter(d => d.Status === selectedStatus);
+    }
 
-            if (selectedKnowledge !== "all") {
-                filteredNodes = filteredNodes.filter(d => d.Knowledge_Intensity === selectedKnowledge);
-            }
+    if (selectedKnowledge !== "all") {
+        filteredNodes = filteredNodes.filter(d => d.Knowledge_Intensity === selectedKnowledge);
+    }
 
-            if (selectedCapital !== "all") {
-                filteredNodes = filteredNodes.filter(d => d.Capital_Intensity === selectedCapital);
-            }
+    if (selectedCapital !== "all") {
+        filteredNodes = filteredNodes.filter(d => d.Capital_Intensity === selectedCapital);
+    }
 
-            if (selectedLabor !== "all") {
-                filteredNodes = filteredNodes.filter(d => d.Labor_Intensity === selectedLabor);
-            }
+    if (selectedLabor !== "all") {
+        filteredNodes = filteredNodes.filter(d => d.Labor_Intensity === selectedLabor);
+    }
 
-            if (selectedNaturalResources !== "all") {
-                filteredNodes = filteredNodes.filter(d => d.Natural_Resources_Intensity === selectedNaturalResources);
-            }
+    if (selectedNaturalResources !== "all") {
+        filteredNodes = filteredNodes.filter(d => d.Natural_Resources_Intensity === selectedNaturalResources);
+    }
 
-            const nodesWithEdges = new Set();
-            edgesData.forEach(edge => {
-                nodesWithEdges.add(edge.Source);
-                nodesWithEdges.add(edge.Target);
-            });
+    // Step 2: Get activities of the filtered nodes
+    const remainingActivities = new Set(filteredNodes.map(node => node.Activity));
 
-            filteredNodes = filteredNodes.filter(node => nodesWithEdges.has(node.Activity));
+    // Step 3: Filter edges where both source and target nodes exist in the filtered node set
+    let filteredEdges = edgesData.filter(edge => 
+        remainingActivities.has(edge.Source) && remainingActivities.has(edge.Target)
+    );
 
-            renderChart(filteredNodes, edgesData);
-        }
+    // Step 4: Get the set of activities for nodes that are connected by edges
+    const nodesWithEdges = new Set();
+    filteredEdges.forEach(edge => {
+        nodesWithEdges.add(edge.Source);
+        nodesWithEdges.add(edge.Target);
+    });
 
+    // Step 5: Re-filter nodes to include only those that have at least one edge
+    filteredNodes = filteredNodes.filter(node => nodesWithEdges.has(node.Activity));
+
+    // Step 6: Render the filtered nodes and edges
+    renderChart(filteredNodes, filteredEdges);
+}
+        
+        
         function displayNodeDetails(nodeData) {
             const detailsTable = d3.select("#detailsTable");
             detailsTable.html("");
@@ -604,23 +617,25 @@
         }
 
         function dragstarted(event, d) {
-            d3.select(this).raise().attr("stroke", "black");
-        }
+    d3.select(this).raise().attr("stroke", "black");
+    // Store the original position before dragging
+    d.originalX = x(d.Value_Chain_Position);
+    d.originalY = y(d.Global_Competition_Intensity);
+}
 
-        function dragended(event, d) {
-    // Reset the node to its original position
-        d3.select(this).transition()
-            .duration(500)  // Optional: Add a smooth transition back to the original position
-            .attr("transform", `translate(${d.originalX}, ${d.originalY})`);
-        d3.select(this).attr("stroke", null);
-    }
+function dragged(event, d) {
+    d3.select(this)
+        .attr("transform", `translate(${event.x}, ${event.y})`);
+}
 
-
-        function dragended(event, d) {
-            d3.select(this)
-                .attr("transform", `translate(${d.originalX}, ${d.originalY})`);
-            d3.select(this).attr("stroke", null);
-        }
+function dragended(event, d) {
+    // Revert to original position when drag ends
+    d3.select(this)
+        .transition()
+        .duration(500)
+        .attr("transform", `translate(${d.originalX}, ${d.originalY})`);
+    d3.select(this).attr("stroke", null);
+}
 
     </script>
 </body>
