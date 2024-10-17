@@ -1,1 +1,1 @@
-# graphy-analystics
+# graphy-analytics
