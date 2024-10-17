@@ -74,22 +74,6 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
         }
 
-        .tooltip table {
-            width: 100%;
-            margin-top: 5px;
-            border-collapse: collapse;
-        }
-
-        .tooltip table, .tooltip th, .tooltip td {
-            border: 1px solid #ddd;
-            padding: 4px;
-        }
-
-        .tooltip th {
-            background-color: #333;
-            color: #fff;
-        }
-
         .zoom-buttons {
             position: absolute;
             top: 10px;
@@ -204,6 +188,10 @@
             </div>
 
             <div class="mb-3">
+                <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#nodeEdgeModal">Add Node/Edge</button>
+            </div>
+
+            <div class="mb-3">
                 <input type="file" id="fileInputNodes" accept=".csv" class="form-control" />
                 <label>Upload Nodes CSV</label>
             </div>
@@ -227,6 +215,90 @@
         <table id="detailsTable"></table>
     </div>
 
+    <!-- Modal for adding nodes and edges -->
+    <div class="modal fade" id="nodeEdgeModal" tabindex="-1" aria-labelledby="nodeEdgeModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="nodeEdgeModalLabel">Add Node / Edge</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addNodeEdgeForm">
+                        <div class="mb-3">
+                            <label for="addType" class="form-label">Add Type</label>
+                            <select id="addType" class="form-select">
+                                <option value="node">Node</option>
+                                <option value="edge">Edge</option>
+                            </select>
+                        </div>
+
+                        <div id="nodeForm" class="mb-3">
+                            <h6>Node Details</h6>
+                            <label for="nodeName" class="form-label">Node Name</label>
+                            <input type="text" id="nodeName" class="form-control" placeholder="Node Name">
+
+                            <label for="nodeStatus" class="form-label">Status</label>
+                            <select id="nodeStatus" class="form-select">
+                                <option value="optimal">Optimal</option>
+                                <option value="underperforming">Underperforming</option>
+                                <option value="not_present">Not Present</option>
+                            </select>
+
+                            <label for="nodeKnowledge" class="form-label">Knowledge Intensity</label>
+                            <select id="nodeKnowledge" class="form-select">
+                                <option value="high">High</option>
+                                <option value="medium">Medium</option>
+                                <option value="low">Low</option>
+                            </select>
+
+                            <label for="nodeCapital" class="form-label">Capital Intensity</label>
+                            <select id="nodeCapital" class="form-select">
+                                <option value="high">High</option>
+                                <option value="medium">Medium</option>
+                                <option value="low">Low</option>
+                            </select>
+
+                            <label for="nodeLabor" class="form-label">Labor Intensity</label>
+                            <select id="nodeLabor" class="form-select">
+                                <option value="high">High</option>
+                                <option value="medium">Medium</option>
+                                <option value="low">Low</option>
+                            </select>
+
+                            <label for="nodeNaturalResources" class="form-label">Natural Resources Intensity</label>
+                            <select id="nodeNaturalResources" class="form-select">
+                                <option value="high">High</option>
+                                <option value="medium">Medium</option>
+                                <option value="low">Low</option>
+                            </select>
+                        </div>
+
+                        <div id="edgeForm" class="mb-3" style="display: none;">
+                            <h6>Edge Details</h6>
+                            <label for="edgeSource" class="form-label">Source Node</label>
+                            <input type="text" id="edgeSource" class="form-control" placeholder="Source Node Name">
+
+                            <label for="edgeTarget" class="form-label">Target Node</label>
+                            <input type="text" id="edgeTarget" class="form-control" placeholder="Target Node Name">
+
+                            <label for="edgeType" class="form-label">Edge Type</label>
+                            <select id="edgeType" class="form-select">
+                                <option value="Just in time">Just in time</option>
+                                <option value="Made to order">Made to order</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="addButton">Add</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         const svg = d3.select("svg"),
               margin = {top: 50, right: 50, bottom: 50, left: 50},
@@ -238,7 +310,7 @@
         const x = d3.scaleLinear().domain([0, 100]).range([0, width]);
         const y = d3.scaleLinear().domain([0, 100]).range([height, 0]);
 
-        let nodesData, edgesData;
+        let nodesData = [], edgesData = [];
         let currentZoom = 1;
         let currentTransform = d3.zoomIdentity;
 
@@ -531,58 +603,51 @@
         }
 
         function filterAndUpdate() {
-    const selectedStatus = d3.select("#statusFilter").property("value");
-    const selectedKnowledge = d3.select("#knowledgeFilter").property("value");
-    const selectedCapital = d3.select("#capitalFilter").property("value");
-    const selectedLabor = d3.select("#laborFilter").property("value");
-    const selectedNaturalResources = d3.select("#naturalResourcesFilter").property("value");
+            const selectedStatus = d3.select("#statusFilter").property("value");
+            const selectedKnowledge = d3.select("#knowledgeFilter").property("value");
+            const selectedCapital = d3.select("#capitalFilter").property("value");
+            const selectedLabor = d3.select("#laborFilter").property("value");
+            const selectedNaturalResources = d3.select("#naturalResourcesFilter").property("value");
 
-    // Step 1: Apply filters to nodes based on selected criteria
-    let filteredNodes = nodesData;
+            let filteredNodes = nodesData;
 
-    if (selectedStatus !== "all") {
-        filteredNodes = filteredNodes.filter(d => d.Status === selectedStatus);
-    }
+            if (selectedStatus !== "all") {
+                filteredNodes = filteredNodes.filter(d => d.Status === selectedStatus);
+            }
 
-    if (selectedKnowledge !== "all") {
-        filteredNodes = filteredNodes.filter(d => d.Knowledge_Intensity === selectedKnowledge);
-    }
+            if (selectedKnowledge !== "all") {
+                filteredNodes = filteredNodes.filter(d => d.Knowledge_Intensity === selectedKnowledge);
+            }
 
-    if (selectedCapital !== "all") {
-        filteredNodes = filteredNodes.filter(d => d.Capital_Intensity === selectedCapital);
-    }
+            if (selectedCapital !== "all") {
+                filteredNodes = filteredNodes.filter(d => d.Capital_Intensity === selectedCapital);
+            }
 
-    if (selectedLabor !== "all") {
-        filteredNodes = filteredNodes.filter(d => d.Labor_Intensity === selectedLabor);
-    }
+            if (selectedLabor !== "all") {
+                filteredNodes = filteredNodes.filter(d => d.Labor_Intensity === selectedLabor);
+            }
 
-    if (selectedNaturalResources !== "all") {
-        filteredNodes = filteredNodes.filter(d => d.Natural_Resources_Intensity === selectedNaturalResources);
-    }
+            if (selectedNaturalResources !== "all") {
+                filteredNodes = filteredNodes.filter(d => d.Natural_Resources_Intensity === selectedNaturalResources);
+            }
 
-    // Step 2: Get activities of the filtered nodes
-    const remainingActivities = new Set(filteredNodes.map(node => node.Activity));
+            const remainingActivities = new Set(filteredNodes.map(node => node.Activity));
 
-    // Step 3: Filter edges where both source and target nodes exist in the filtered node set
-    let filteredEdges = edgesData.filter(edge => 
-        remainingActivities.has(edge.Source) && remainingActivities.has(edge.Target)
-    );
+            let filteredEdges = edgesData.filter(edge => 
+                remainingActivities.has(edge.Source) && remainingActivities.has(edge.Target)
+            );
 
-    // Step 4: Get the set of activities for nodes that are connected by edges
-    const nodesWithEdges = new Set();
-    filteredEdges.forEach(edge => {
-        nodesWithEdges.add(edge.Source);
-        nodesWithEdges.add(edge.Target);
-    });
+            const nodesWithEdges = new Set();
+            filteredEdges.forEach(edge => {
+                nodesWithEdges.add(edge.Source);
+                nodesWithEdges.add(edge.Target);
+            });
 
-    // Step 5: Re-filter nodes to include only those that have at least one edge
-    filteredNodes = filteredNodes.filter(node => nodesWithEdges.has(node.Activity));
+            filteredNodes = filteredNodes.filter(node => nodesWithEdges.has(node.Activity));
 
-    // Step 6: Render the filtered nodes and edges
-    renderChart(filteredNodes, filteredEdges);
-}
-        
-        
+            renderChart(filteredNodes, filteredEdges);
+        }
+
         function displayNodeDetails(nodeData) {
             const detailsTable = d3.select("#detailsTable");
             detailsTable.html("");
@@ -617,26 +682,67 @@
         }
 
         function dragstarted(event, d) {
-    d3.select(this).raise().attr("stroke", "black");
-    // Store the original position before dragging
-    d.originalX = x(d.Value_Chain_Position);
-    d.originalY = y(d.Global_Competition_Intensity);
-}
+            d3.select(this).raise().attr("stroke", "black");
+            d.originalX = x(d.Value_Chain_Position);
+            d.originalY = y(d.Global_Competition_Intensity);
+        }
 
-function dragged(event, d) {
-    d3.select(this)
-        .attr("transform", `translate(${event.x}, ${event.y})`);
-}
+        function dragged(event, d) {
+            d3.select(this)
+                .attr("transform", `translate(${event.x}, ${event.y})`);
+        }
 
-function dragended(event, d) {
-    // Revert to original position when drag ends
-    d3.select(this)
-        .transition()
-        .duration(500)
-        .attr("transform", `translate(${d.originalX}, ${d.originalY})`);
-    d3.select(this).attr("stroke", null);
-}
+        function dragended(event, d) {
+            d3.select(this)
+                .transition()
+                .duration(500)
+                .attr("transform", `translate(${d.originalX}, ${d.originalY})`);
+            d3.select(this).attr("stroke", null);
+        }
 
+        // Handle Add Node/Edge Form Submission
+        document.getElementById("addType").addEventListener("change", function() {
+            const addType = this.value;
+            if (addType === "node") {
+                document.getElementById("nodeForm").style.display = "block";
+                document.getElementById("edgeForm").style.display = "none";
+            } else {
+                document.getElementById("nodeForm").style.display = "none";
+                document.getElementById("edgeForm").style.display = "block";
+            }
+        });
+
+        document.getElementById("addButton").addEventListener("click", function() {
+            const addType = document.getElementById("addType").value;
+            if (addType === "node") {
+                // Add Node
+                const newNode = {
+                    Activity: document.getElementById("nodeName").value,
+                    Status: document.getElementById("nodeStatus").value,
+                    Knowledge_Intensity: document.getElementById("nodeKnowledge").value,
+                    Capital_Intensity: document.getElementById("nodeCapital").value,
+                    Labor_Intensity: document.getElementById("nodeLabor").value,
+                    Natural_Resources_Intensity: document.getElementById("nodeNaturalResources").value,
+                    Value_Chain_Position: Math.random() * 100,
+                    Global_Competition_Intensity: Math.random() * 100
+                };
+                nodesData.push(newNode);
+                filterAndUpdate();
+            } else if (addType === "edge") {
+                // Add Edge
+                const newEdge = {
+                    Source: document.getElementById("edgeSource").value,
+                    Target: document.getElementById("edgeTarget").value,
+                    Edge_Type: document.getElementById("edgeType").value
+                };
+                edgesData.push(newEdge);
+                filterAndUpdate();
+            }
+
+            // Close the modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('nodeEdgeModal'));
+            modal.hide();
+        });
     </script>
 </body>
 </html>
