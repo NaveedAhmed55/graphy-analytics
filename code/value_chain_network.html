@@ -192,6 +192,11 @@
             </div>
 
             <div class="mb-3">
+                <button class="btn btn-primary" id="downloadNodes">Download Nodes CSV</button>
+                <button class="btn btn-primary" id="downloadEdges">Download Edges CSV</button>
+            </div>
+
+            <div class="mb-3">
                 <input type="file" id="fileInputNodes" accept=".csv" class="form-control" />
                 <label>Upload Nodes CSV</label>
             </div>
@@ -215,75 +220,77 @@
         <table id="detailsTable"></table>
     </div>
 
-    <!-- Modal for adding nodes and edges -->
-    <div class="modal fade" id="nodeEdgeModal" tabindex="-1" aria-labelledby="nodeEdgeModalLabel" aria-hidden="true">
+    <!-- Modal for adding and editing nodes and edges -->
+    <div class="modal fade" id="nodeEditModal" tabindex="-1" aria-labelledby="nodeEditModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="nodeEdgeModalLabel">Add Node / Edge</h5>
+                    <h5 class="modal-title" id="nodeEditModalLabel">Edit Node / Edge</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="addNodeEdgeForm">
-                        <div class="mb-3">
-                            <label for="addType" class="form-label">Add Type</label>
-                            <select id="addType" class="form-select">
-                                <option value="node">Node</option>
-                                <option value="edge">Edge</option>
-                            </select>
-                        </div>
-
-                        <div id="nodeForm" class="mb-3">
+                    <form id="editNodeEdgeForm">
+                        <div id="nodeEditForm" class="mb-3">
                             <h6>Node Details</h6>
-                            <label for="nodeName" class="form-label">Node Name</label>
-                            <input type="text" id="nodeName" class="form-control" placeholder="Node Name">
+                            <label for="editNodeName" class="form-label">Node Name</label>
+                            <input type="text" id="editNodeName" class="form-control" placeholder="Node Name">
 
-                            <label for="nodeStatus" class="form-label">Status</label>
-                            <select id="nodeStatus" class="form-select">
+                            <label for="editNodeStatus" class="form-label">Status</label>
+                            <select id="editNodeStatus" class="form-select">
                                 <option value="optimal">Optimal</option>
                                 <option value="underperforming">Underperforming</option>
                                 <option value="not_present">Not Present</option>
                             </select>
 
-                            <label for="nodeKnowledge" class="form-label">Knowledge Intensity</label>
-                            <select id="nodeKnowledge" class="form-select">
+                            <label for="editNodeKnowledge" class="form-label">Knowledge Intensity</label>
+                            <select id="editNodeKnowledge" class="form-select">
                                 <option value="high">High</option>
                                 <option value="medium">Medium</option>
                                 <option value="low">Low</option>
                             </select>
 
-                            <label for="nodeCapital" class="form-label">Capital Intensity</label>
-                            <select id="nodeCapital" class="form-select">
+                            <label for="editNodeCapital" class="form-label">Capital Intensity</label>
+                            <select id="editNodeCapital" class="form-select">
                                 <option value="high">High</option>
                                 <option value="medium">Medium</option>
                                 <option value="low">Low</option>
                             </select>
 
-                            <label for="nodeLabor" class="form-label">Labor Intensity</label>
-                            <select id="nodeLabor" class="form-select">
+                            <label for="editNodeLabor" class="form-label">Labor Intensity</label>
+                            <select id="editNodeLabor" class="form-select">
                                 <option value="high">High</option>
                                 <option value="medium">Medium</option>
                                 <option value="low">Low</option>
                             </select>
 
-                            <label for="nodeNaturalResources" class="form-label">Natural Resources Intensity</label>
-                            <select id="nodeNaturalResources" class="form-select">
+                            <label for="editNodeNaturalResources" class="form-label">Natural Resources Intensity</label>
+                            <select id="editNodeNaturalResources" class="form-select">
                                 <option value="high">High</option>
                                 <option value="medium">Medium</option>
                                 <option value="low">Low</option>
                             </select>
+
+                            <label for="editNodePosition" class="form-label">Value Chain Position</label>
+                            <input type="number" id="editNodePosition" class="form-control" placeholder="Value Chain Position">
+
+                            <label for="editNodeCompetition" class="form-label">Global Competition Intensity</label>
+                            <input type="number" id="editNodeCompetition" class="form-control" placeholder="Global Competition Intensity">
                         </div>
 
-                        <div id="edgeForm" class="mb-3" style="display: none;">
+                        <div id="edgeEditForm" class="mb-3" style="display: none;">
                             <h6>Edge Details</h6>
-                            <label for="edgeSource" class="form-label">Source Node</label>
-                            <input type="text" id="edgeSource" class="form-control" placeholder="Source Node Name">
+                            <label for="editEdgeSource" class="form-label">Source Node</label>
+                            <select id="editEdgeSource" class="form-select">
+                                <!-- Source nodes will be populated here dynamically -->
+                            </select>
 
-                            <label for="edgeTarget" class="form-label">Target Node</label>
-                            <input type="text" id="edgeTarget" class="form-control" placeholder="Target Node Name">
+                            <label for="editEdgeTarget" class="form-label">Target Node</label>
+                            <select id="editEdgeTarget" class="form-select">
+                                <!-- Target nodes will be populated here dynamically -->
+                            </select>
 
-                            <label for="edgeType" class="form-label">Edge Type</label>
-                            <select id="edgeType" class="form-select">
+                            <label for="editEdgeType" class="form-label">Edge Type</label>
+                            <select id="editEdgeType" class="form-select">
                                 <option value="Just in time">Just in time</option>
                                 <option value="Made to order">Made to order</option>
                             </select>
@@ -292,7 +299,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" id="addButton">Add</button>
+                    <button type="button" class="btn btn-primary" id="saveEditButton">Save Changes</button>
                 </div>
             </div>
         </div>
@@ -300,6 +307,9 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        let currentEditData = null;
+        let isEditingNode = false;
+
         const svg = d3.select("svg"),
               margin = {top: 50, right: 50, bottom: 50, left: 50},
               width = 1800 - margin.left - margin.right,
@@ -318,6 +328,7 @@
             .attr("class", "tooltip")
             .style("opacity", 0);
 
+        // Event Listeners for File Input, Zoom, Filters
         document.getElementById('fileInputNodes').addEventListener('change', function(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -479,6 +490,28 @@
                 .on("click", function(event, d) {
                     displayNodeDetails(d);
                 })
+                .on("dblclick", function(event, d) {
+                    editNode(d);
+                })
+                .on("mouseover", function(event, d) {
+                    tooltip.transition().duration(200).style("opacity", .9);
+                    tooltip.html(`
+                        <strong>Node Details</strong><br>
+                        Activity: ${d.Activity}<br>
+                        Status: ${d.Status}<br>
+                        Knowledge Intensity: ${d.Knowledge_Intensity}<br>
+                        Capital Intensity: ${d.Capital_Intensity}<br>
+                        Labor Intensity: ${d.Labor_Intensity}<br>
+                        Natural Resources Intensity: ${d.Natural_Resources_Intensity}<br>
+                        Value Chain Position: ${d.Value_Chain_Position}<br>
+                        Global Competition Intensity: ${d.Global_Competition_Intensity}
+                    `)
+                    .style("left", (event.pageX + 5) + "px")
+                    .style("top", (event.pageY - 28) + "px");
+                })
+                .on("mouseout", function() {
+                    tooltip.transition().duration(500).style("opacity", 0);
+                })
                 .call(d3.drag()
                     .on("start", dragstarted)
                     .on("drag", dragged)
@@ -501,27 +534,7 @@
                     }
                 })
                 .attr("stroke", "#333")
-                .attr("stroke-width", 2)
-                .on("mouseover", function(event, d) {
-                    tooltip.transition().duration(200).style("opacity", .9);
-                    tooltip.html(`
-                        <strong>Node Details</strong>
-                        <table>
-                            <tr><th>Attribute</th><th>Value</th></tr>
-                            <tr><td>Activity</td><td>${d.Activity}</td></tr>
-                            <tr><td>Status</td><td>${d.Status}</td></tr>
-                            <tr><td>Knowledge Intensity</td><td>${d.Knowledge_Intensity}</td></tr>
-                            <tr><td>Capital Intensity</td><td>${d.Capital_Intensity}</td></tr>
-                            <tr><td>Labor Intensity</td><td>${d.Labor_Intensity}</td></tr>
-                            <tr><td>Natural Resources Intensity</td><td>${d.Natural_Resources_Intensity}</td></tr>
-                        </table>
-                    `)
-                    .style("left", (event.pageX + 5) + "px")
-                    .style("top", (event.pageY - 28) + "px");
-                })
-                .on("mouseout", function() {
-                    tooltip.transition().duration(500).style("opacity", 0);
-                });
+                .attr("stroke-width", 2);
 
             node.append("text")
                 .attr("text-anchor", "middle")
@@ -533,6 +546,7 @@
                 .text(d => d.Activity)
                 .call(wrapText, 90);
 
+            // Add the small boxes below each node to represent the intensities
             const factors = ["Knowledge_Intensity", "Capital_Intensity", "Labor_Intensity", "Natural_Resources_Intensity"];
             const factorGroup = node.append("g").attr("transform", "translate(0, 10)");
 
@@ -554,6 +568,76 @@
                     .text(factor.slice(0, 3).toLowerCase());
             });
         }
+
+        function editNode(node) {
+            // Open the modal and populate with current node data
+            isEditingNode = true;
+            currentEditData = node;
+            document.getElementById("nodeEditForm").style.display = "block";
+            document.getElementById("edgeEditForm").style.display = "none";
+            document.getElementById("editNodeName").value = node.Activity;
+            document.getElementById("editNodeStatus").value = node.Status;
+            document.getElementById("editNodeKnowledge").value = node.Knowledge_Intensity;
+            document.getElementById("editNodeCapital").value = node.Capital_Intensity;
+            document.getElementById("editNodeLabor").value = node.Labor_Intensity;
+            document.getElementById("editNodeNaturalResources").value = node.Natural_Resources_Intensity;
+            document.getElementById("editNodePosition").value = node.Value_Chain_Position;
+            document.getElementById("editNodeCompetition").value = node.Global_Competition_Intensity;
+
+            const modal = new bootstrap.Modal(document.getElementById('nodeEditModal'));
+            modal.show();
+        }
+
+        function editEdge(edge) {
+            // Open the modal and populate with current edge data
+            isEditingNode = false;
+            currentEditData = edge;
+            document.getElementById("nodeEditForm").style.display = "none";
+            document.getElementById("edgeEditForm").style.display = "block";
+
+            // Populate source and target options
+            const sourceSelect = document.getElementById("editEdgeSource");
+            const targetSelect = document.getElementById("editEdgeTarget");
+            sourceSelect.innerHTML = targetSelect.innerHTML = ''; // Clear previous options
+
+            nodesData.forEach(node => {
+                const option = document.createElement("option");
+                option.value = node.Activity;
+                option.text = node.Activity;
+                sourceSelect.appendChild(option.cloneNode(true));
+                targetSelect.appendChild(option);
+            });
+
+            // Set the current edge source and target values
+            document.getElementById("editEdgeSource").value = edge.Source;
+            document.getElementById("editEdgeTarget").value = edge.Target;
+            document.getElementById("editEdgeType").value = edge.Edge_Type;
+
+            const modal = new bootstrap.Modal(document.getElementById('nodeEditModal'));
+            modal.show();
+        }
+
+        // Save edited node or edge data
+        document.getElementById("saveEditButton").addEventListener("click", function() {
+            if (isEditingNode) {
+                currentEditData.Activity = document.getElementById("editNodeName").value;
+                currentEditData.Status = document.getElementById("editNodeStatus").value;
+                currentEditData.Knowledge_Intensity = document.getElementById("editNodeKnowledge").value;
+                currentEditData.Capital_Intensity = document.getElementById("editNodeCapital").value;
+                currentEditData.Labor_Intensity = document.getElementById("editNodeLabor").value;
+                currentEditData.Natural_Resources_Intensity = document.getElementById("editNodeNaturalResources").value;
+                currentEditData.Value_Chain_Position = +document.getElementById("editNodePosition").value;
+                currentEditData.Global_Competition_Intensity = +document.getElementById("editNodeCompetition").value;
+            } else {
+                currentEditData.Source = document.getElementById("editEdgeSource").value;
+                currentEditData.Target = document.getElementById("editEdgeTarget").value;
+                currentEditData.Edge_Type = document.getElementById("editEdgeType").value;
+            }
+
+            filterAndUpdate();
+            const modal = bootstrap.Modal.getInstance(document.getElementById('nodeEditModal'));
+            modal.hide();
+        });
 
         function getEdgeAttributes(edge) {
             let strokeWidth, strokeColor, lineDash;
@@ -699,50 +783,6 @@
                 .attr("transform", `translate(${d.originalX}, ${d.originalY})`);
             d3.select(this).attr("stroke", null);
         }
-
-        // Handle Add Node/Edge Form Submission
-        document.getElementById("addType").addEventListener("change", function() {
-            const addType = this.value;
-            if (addType === "node") {
-                document.getElementById("nodeForm").style.display = "block";
-                document.getElementById("edgeForm").style.display = "none";
-            } else {
-                document.getElementById("nodeForm").style.display = "none";
-                document.getElementById("edgeForm").style.display = "block";
-            }
-        });
-
-        document.getElementById("addButton").addEventListener("click", function() {
-            const addType = document.getElementById("addType").value;
-            if (addType === "node") {
-                // Add Node
-                const newNode = {
-                    Activity: document.getElementById("nodeName").value,
-                    Status: document.getElementById("nodeStatus").value,
-                    Knowledge_Intensity: document.getElementById("nodeKnowledge").value,
-                    Capital_Intensity: document.getElementById("nodeCapital").value,
-                    Labor_Intensity: document.getElementById("nodeLabor").value,
-                    Natural_Resources_Intensity: document.getElementById("nodeNaturalResources").value,
-                    Value_Chain_Position: Math.random() * 100,
-                    Global_Competition_Intensity: Math.random() * 100
-                };
-                nodesData.push(newNode);
-                filterAndUpdate();
-            } else if (addType === "edge") {
-                // Add Edge
-                const newEdge = {
-                    Source: document.getElementById("edgeSource").value,
-                    Target: document.getElementById("edgeTarget").value,
-                    Edge_Type: document.getElementById("edgeType").value
-                };
-                edgesData.push(newEdge);
-                filterAndUpdate();
-            }
-
-            // Close the modal
-            const modal = bootstrap.Modal.getInstance(document.getElementById('nodeEdgeModal'));
-            modal.hide();
-        });
     </script>
 </body>
 </html>
