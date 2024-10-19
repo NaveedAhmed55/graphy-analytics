@@ -106,10 +106,10 @@
         }
 
         .details-section {
-            padding: 20px;
+            padding: 10px;
             background-color: #ffffff;
             border-top: 1px solid #dee2e6;
-            height: 20%;
+            height: 100%;
             overflow-y: auto;
         }
 
@@ -341,7 +341,82 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        // Function to convert array of objects to CSV format
+    function convertToCSV(data) {
+        const keys = Object.keys(data[0]);
+        const csvData = [keys.join(","), ...data.map(row => keys.map(k => row[k]).join(","))].join("\n");
+        return csvData;
+    }
+
+    // Function to trigger download
+    function downloadCSV(csvContent, fileName) {
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement("a");
+        const url = URL.createObjectURL(blob);
+        link.setAttribute("href", url);
+        link.setAttribute("download", fileName);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    // Function to open the modal for editing a node
+    function editNode(nodeData) {
+        // Set current node data for later reference
+        currentEditData = nodeData;
+        isEditingNode = true;
         
+        // Show the node form in the modal
+        document.getElementById('addType').value = 'node';
+        document.getElementById('nodeForm').style.display = 'block';
+        document.getElementById('edgeForm').style.display = 'none';
+        
+        // Populate the form fields with the node's current data
+        document.getElementById('nodeName').value = nodeData.Activity;
+        document.getElementById('nodeStatus').value = nodeData.Status;
+        document.getElementById('nodeKnowledge').value = nodeData.Knowledge_Intensity;
+        document.getElementById('nodeCapital').value = nodeData.Capital_Intensity;
+        document.getElementById('nodeLabor').value = nodeData.Labor_Intensity;
+        document.getElementById('nodeNaturalResources').value = nodeData.Natural_Resources_Intensity;
+        document.getElementById('nodeInstitution').value = nodeData.Institution;
+        document.getElementById('nodeLocation').value = nodeData.Location;
+        document.getElementById('nodeOwnership').value = nodeData.Ownership;
+        document.getElementById('nodeVolume').value = nodeData.Volume;
+        document.getElementById('nodeLaborRequirement').value = nodeData.Labor_Requirement;
+        document.getElementById('nodeLinkagesSupport').value = nodeData.Linkages_Support;
+        document.getElementById('nodeLinkagesValueChain').value = nodeData.Linkages_Value_Chain;
+        document.getElementById('nodeLaunchingSchedule').value = nodeData.Launching_Schedule;
+        document.getElementById('nodeComments').value = nodeData.Comments;
+        document.getElementById('nodeRandom10').value = nodeData.Random_Column_10;
+        document.getElementById('nodeRandom11').value = nodeData.Random_Column_11;
+        
+        // Show the modal
+        const modal = new bootstrap.Modal(document.getElementById('nodeEdgeModal'));
+        modal.show();
+    }
+
+
+    // Event listener for downloading Nodes CSV
+    document.getElementById('downloadNodes').addEventListener('click', function() {
+        if (nodesData.length === 0) {
+            alert("No node data available to download.");
+            return;
+        }
+        const csvContent = convertToCSV(nodesData);
+        downloadCSV(csvContent, "nodes.csv");
+    });
+
+    // Event listener for downloading Edges CSV
+    document.getElementById('downloadEdges').addEventListener('click', function() {
+        if (edgesData.length === 0) {
+            alert("No edge data available to download.");
+            return;
+        }
+        const csvContent = convertToCSV(edgesData);
+        downloadCSV(csvContent, "edges.csv");
+    });
+
         let currentEditData = null;
         let isEditingNode = false;
     
