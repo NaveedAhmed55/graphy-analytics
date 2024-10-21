@@ -566,6 +566,8 @@ document.getElementById('addType').addEventListener('change', function() {
     
                 if (sourceNode && targetNode) {
                     const { strokeWidth, strokeColor, lineDash } = getEdgeAttributes(edge);
+                     // Set the color based on the Edge_Type, with "On stock" being red
+                        const edgeColor = edge.Edge_Type === 'On stock' ? 'red' : strokeColor;
     
                     g.append("line")
                         .attr("x1", x(sourceNode.Value_Chain_Position))
@@ -789,15 +791,20 @@ function populateNodeDropdowns() {
                     strokeColor = "yellow";
                     lineDash = "5, 5";
                     break;
+                case "On stock":  // New case for "On stock"
+                    strokeWidth = 4;
+                    strokeColor = "red";  // Set the edge color to red
+                    lineDash = "none";  // No dashed line for this type
+                    break;
                 default:
                     strokeWidth = 2;
-                    strokeColor = "";
+                    strokeColor = "grey";
                     lineDash = "none";
                     break;
             }
             return { strokeWidth, strokeColor, lineDash };
         }
-    
+
         function wrapText(text, width) {
             text.each(function() {
                 const textElement = d3.select(this);
