@@ -106,27 +106,28 @@
         }
 
         .details-section {
-            padding: 10px;
-            background-color: #ffffff;
-            border-top: 1px solid #dee2e6;
-            height: 100%;
-            overflow-y: auto;
-        }
+        background-color: #ffffff;
+        border-top: 1px solid #dee2e6;
+        max-height: 1000px; /* Adjust this value as needed to display more content */
+        overflow-y: auto; /* Allows scrolling only when content exceeds the max height */
+    }
 
-        .details-section table {
-            width: 100%;
-            border-collapse: collapse;
-        }
+    .details-section table {
+        width: 100%;
+        border-collapse: collapse;
+    }
 
-        .details-section th, .details-section td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
+    .details-section th, .details-section td {
+        border: 1px solid #ddd;
+        padding: 2px;
+        text-align: left;
+    }
 
-        .details-section th {
-            background-color: #f2f2f2;
-        }
+    .details-section th {
+        background-color: #f2f2f2;
+        height: 200px;
+    }
+
     </style>
 </head>
 <body>
@@ -318,17 +319,23 @@
                         <div id="edgeForm" class="mb-3" style="display: none;">
                             <h6>Edge Details</h6>
                             <label for="edgeSource" class="form-label">Source Node</label>
-                            <input type="text" id="edgeSource" class="form-control" placeholder="Source">
-
+                            <select id="edgeSource" class="form-select">
+                                <!-- Options will be dynamically populated -->
+                            </select>
+                        
                             <label for="edgeTarget" class="form-label">Target Node</label>
-                            <input type="text" id="edgeTarget" class="form-control" placeholder="Target">
-
+                            <select id="edgeTarget" class="form-select">
+                                <!-- Options will be dynamically populated -->
+                            </select>
+                        
                             <label for="edgeType" class="form-label">Edge Type</label>
                             <select id="edgeType" class="form-select">
                                 <option value="Just in time">Just in time</option>
                                 <option value="Made to order">Made to order</option>
+                                <option value="On stock">On stock</option>
                             </select>
                         </div>
+                        
                     </form>
                 </div>
                 <div class="modal-footer">
@@ -363,38 +370,41 @@
 
     // Function to open the modal for editing a node
     function editNode(nodeData) {
-        // Set current node data for later reference
-        currentEditData = nodeData;
-        isEditingNode = true;
-        
-        // Show the node form in the modal
-        document.getElementById('addType').value = 'node';
-        document.getElementById('nodeForm').style.display = 'block';
-        document.getElementById('edgeForm').style.display = 'none';
-        
-        // Populate the form fields with the node's current data
-        document.getElementById('nodeName').value = nodeData.Activity;
-        document.getElementById('nodeStatus').value = nodeData.Status;
-        document.getElementById('nodeKnowledge').value = nodeData.Knowledge_Intensity;
-        document.getElementById('nodeCapital').value = nodeData.Capital_Intensity;
-        document.getElementById('nodeLabor').value = nodeData.Labor_Intensity;
-        document.getElementById('nodeNaturalResources').value = nodeData.Natural_Resources_Intensity;
-        document.getElementById('nodeInstitution').value = nodeData.Institution;
-        document.getElementById('nodeLocation').value = nodeData.Location;
-        document.getElementById('nodeOwnership').value = nodeData.Ownership;
-        document.getElementById('nodeVolume').value = nodeData.Volume;
-        document.getElementById('nodeLaborRequirement').value = nodeData.Labor_Requirement;
-        document.getElementById('nodeLinkagesSupport').value = nodeData.Linkages_Support;
-        document.getElementById('nodeLinkagesValueChain').value = nodeData.Linkages_Value_Chain;
-        document.getElementById('nodeLaunchingSchedule').value = nodeData.Launching_Schedule;
-        document.getElementById('nodeComments').value = nodeData.Comments;
-        document.getElementById('nodeRandom10').value = nodeData.Random_Column_10;
-        document.getElementById('nodeRandom11').value = nodeData.Random_Column_11;
-        
-        // Show the modal
-        const modal = new bootstrap.Modal(document.getElementById('nodeEdgeModal'));
-        modal.show();
-    }
+    // Set current node data for later reference
+    currentEditData = nodeData;
+    isEditingNode = true;
+    
+    // Change the modal title to "Edit Node"
+    document.getElementById('nodeEdgeModalLabel').textContent = 'Edit Node';
+    
+    // Show the node form in the modal
+    document.getElementById('addType').value = 'node';
+    document.getElementById('nodeForm').style.display = 'block';
+    document.getElementById('edgeForm').style.display = 'none';
+    
+    // Populate the form fields with the node's current data
+    document.getElementById('nodeName').value = nodeData.Activity;
+    document.getElementById('nodeStatus').value = nodeData.Status;
+    document.getElementById('nodeKnowledge').value = nodeData.Knowledge_Intensity;
+    document.getElementById('nodeCapital').value = nodeData.Capital_Intensity;
+    document.getElementById('nodeLabor').value = nodeData.Labor_Intensity;
+    document.getElementById('nodeNaturalResources').value = nodeData.Natural_Resources_Intensity;
+    document.getElementById('nodeInstitution').value = nodeData.Institution;
+    document.getElementById('nodeLocation').value = nodeData.Location;
+    document.getElementById('nodeOwnership').value = nodeData.Ownership;
+    document.getElementById('nodeVolume').value = nodeData.Volume;
+    document.getElementById('nodeLaborRequirement').value = nodeData.Labor_Requirement;
+    document.getElementById('nodeLinkagesSupport').value = nodeData.Linkages_Support;
+    document.getElementById('nodeLinkagesValueChain').value = nodeData.Linkages_Value_Chain;
+    document.getElementById('nodeLaunchingSchedule').value = nodeData.Launching_Schedule;
+    document.getElementById('nodeComments').value = nodeData.Comments;
+    document.getElementById('nodeRandom10').value = nodeData.Random_Column_10;
+    document.getElementById('nodeRandom11').value = nodeData.Random_Column_11;
+    
+    // Show the modal
+    const modal = new bootstrap.Modal(document.getElementById('nodeEdgeModal'));
+    modal.show();
+}
 
 
     // Event listener for downloading Nodes CSV
@@ -503,20 +513,20 @@
             currentZoom *= factor;
             svg.transition().duration(500).call(zoom.scaleTo, currentZoom);
         }
+    // Dropdown Handling for Node/Edge selection and handling
+document.getElementById('addType').addEventListener('change', function() {
+    const nodeForm = document.getElementById('nodeForm');
+    const edgeForm = document.getElementById('edgeForm');
     
-        // Dropdown Handling
-        document.getElementById('addType').addEventListener('change', function() {
-            const nodeForm = document.getElementById('nodeForm');
-            const edgeForm = document.getElementById('edgeForm');
-            
-            if (this.value === 'node') {
-                nodeForm.style.display = 'block';
-                edgeForm.style.display = 'none';
-            } else if (this.value === 'edge') {
-                nodeForm.style.display = 'none';
-                edgeForm.style.display = 'block';
-            }
-        });
+    if (this.value === 'node') {
+        nodeForm.style.display = 'block';
+        edgeForm.style.display = 'none';
+    } else if (this.value === 'edge') {
+        nodeForm.style.display = 'none';
+        edgeForm.style.display = 'block';
+        populateNodeDropdowns(); // Populate the dropdowns when "Edge" is selected
+    }
+});
     
         function renderChart(nodes, edges) {
             g.selectAll("*").remove();
@@ -620,24 +630,15 @@
                 .on("mouseover", function(event, d) {
                     tooltip.transition().duration(200).style("opacity", .9);
                     tooltip.html(`
-                        <strong>Node Details</strong><br>
-                        Activity: ${d.Activity}<br>
-                        Status: ${d.Status}<br>
-                        Knowledge Intensity: ${d.Knowledge_Intensity}<br>
-                        Capital Intensity: ${d.Capital_Intensity}<br>
-                        Labor Intensity: ${d.Labor_Intensity}<br>
-                        Natural Resources Intensity: ${d.Natural_Resources_Intensity}<br>
-                        Institution: ${d.Institution}<br>
-                        Location: ${d.Location}<br>
-                        Ownership: ${d.Ownership}<br>
-                        Volume: ${d.Volume}<br>
-                        Labor Requirement: ${d.Labor_Requirement}<br>
-                        Linkages with Support: ${d.Linkages_Support}<br>
-                        Linkages with Value Chain: ${d.Linkages_Value_Chain}<br>
-                        Launching Schedule: ${d.Launching_Schedule}<br>
-                        Comments: ${d.Comments}<br>
-                        Random_Column_10: ${d.Random_Column_10}<br>
-                        Random_Column_11: ${d.Random_Column_11}
+                    <strong>Node Details</strong><br>
+                    Activity: ${d.Activity}<br>
+                    Status: ${d.Status}<br>
+                    Knowledge Intensity: ${d.Knowledge_Intensity}<br>
+                    Capital Intensity: ${d.Capital_Intensity}<br>
+                    Labor Intensity: ${d.Labor_Intensity}<br>
+                    Natural Resources Intensity: ${d.Natural_Resources_Intensity}
+                    Value Chain Position: ${d.Value_Chain_Position}<br>
+                    Global Competition Intensity: ${d.Global_Competition_Intensity}<br>
                     `)
                     .style("left", (event.pageX + 5) + "px")
                     .style("top", (event.pageY - 28) + "px");
@@ -701,7 +702,29 @@
                     .text(factor.slice(0, 3).toLowerCase());
             });
         }
-    
+    // Function to populate source and target dropdowns
+function populateNodeDropdowns() {
+    const sourceSelect = document.getElementById('edgeSource');
+    const targetSelect = document.getElementById('edgeTarget');
+
+    // Clear previous options
+    sourceSelect.innerHTML = '';
+    targetSelect.innerHTML = '';
+
+    // Populate with node names (Activity)
+    nodesData.forEach(node => {
+        const optionSource = document.createElement('option');
+        optionSource.value = node.Activity;
+        optionSource.text = node.Activity;
+
+        const optionTarget = document.createElement('option');
+        optionTarget.value = node.Activity;
+        optionTarget.text = node.Activity;
+
+        sourceSelect.appendChild(optionSource);
+        targetSelect.appendChild(optionTarget);
+    });
+}
         // Dropdown event for Node/Edge selection and handling
         document.getElementById('addType').addEventListener('change', function() {
             const addType = document.getElementById('addType').value;
@@ -849,8 +872,22 @@
         function displayNodeDetails(nodeData) {
             const detailsTable = d3.select("#detailsTable");
             detailsTable.html("");
+
+                // List of fields to exclude from node details
+            const excludeFields = [
+                "Activity", 
+                "Value_Chain_Position", 
+                "Global_Competition_Intensity", 
+                "Status", 
+                "Knowledge_Intensity", 
+                "Capital_Intensity", 
+                "Labor_Intensity", 
+                "Natural_Resources_Intensity"
+            ]
     
-            const headers = Object.keys(nodeData);
+             // Filter out the excluded fields
+                const headers = Object.keys(nodeData).filter(header => !excludeFields.includes(header));
+
             detailsTable.append("thead").append("tr")
                 .selectAll("th")
                 .data(headers)
