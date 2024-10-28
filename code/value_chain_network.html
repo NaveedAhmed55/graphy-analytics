@@ -121,6 +121,8 @@
         border: 1px solid #ddd;
         padding: 2px;
         text-align: left;
+        font-weight: bolder;
+        white-space: nowrap;
     }
 
     .details-section th {
@@ -243,6 +245,13 @@
                             <h6>Node Details</h6>
                             <label for="nodeName" class="form-label">Node Name</label>
                             <input type="text" id="nodeName" class="form-control" placeholder="Node Name">
+                            <!-- Node-specific fields in the form -->
+                            <label for="nodeValueChainPosition" class="form-label">Value Chain Position</label>
+                            <input type="number" id="nodeValueChainPosition" class="form-control" placeholder="Value Chain Position">
+
+                            <label for="nodeGlobalCompetition" class="form-label">Global Competition Intensity</label>
+                            <input type="number" id="nodeGlobalCompetition" class="form-control" placeholder="Global Competition Intensity">
+
 
                             <!-- Node-specific fields -->
                             <label for="nodeStatus" class="form-label">Status</label>
@@ -740,44 +749,57 @@ function populateNodeDropdowns() {
         });
     
         // Save node or edge
-        document.getElementById('saveNodeEdgeButton').addEventListener('click', function() {
-            const addType = document.getElementById('addType').value;
-    
-            if (addType === 'node') {
-                const newNode = {
-                    Activity: document.getElementById('nodeName').value,
-                    Status: document.getElementById('nodeStatus').value,
-                    Knowledge_Intensity: document.getElementById('nodeKnowledge').value,
-                    Capital_Intensity: document.getElementById('nodeCapital').value,
-                    Labor_Intensity: document.getElementById('nodeLabor').value,
-                    Natural_Resources_Intensity: document.getElementById('nodeNaturalResources').value,
-                    Institution: document.getElementById('nodeInstitution').value,
-                    Location: document.getElementById('nodeLocation').value,
-                    Ownership: document.getElementById('nodeOwnership').value,
-                    Volume: document.getElementById('nodeVolume').value,
-                    Labor_Requirement: document.getElementById('nodeLaborRequirement').value,
-                    Linkages_Support: document.getElementById('nodeLinkagesSupport').value,
-                    Linkages_Value_Chain: document.getElementById('nodeLinkagesValueChain').value,
-                    Launching_Schedule: document.getElementById('nodeLaunchingSchedule').value,
-                    Comments: document.getElementById('nodeComments').value,
-                    Random_Column_10: document.getElementById('nodeRandom10').value,
-                    Random_Column_11: document.getElementById('nodeRandom11').value,
-                };
-                nodesData.push(newNode);
-            } else if (addType === 'edge') {
-                const newEdge = {
-                    Source: document.getElementById('edgeSource').value,
-                    Target: document.getElementById('edgeTarget').value,
-                    Edge_Type: document.getElementById('edgeType').value
-                };
-                edgesData.push(newEdge);
-            }
-    
-            filterAndUpdate();
-            const modal = bootstrap.Modal.getInstance(document.getElementById('nodeEdgeModal'));
-            modal.hide();
-        });
-    
+       // Save node or edge
+document.getElementById('saveNodeEdgeButton').addEventListener('click', function() {
+    const addType = document.getElementById('addType').value;
+
+    if (addType === 'node') {
+        const newNode = {
+            Activity: document.getElementById('nodeName').value,
+            Status: document.getElementById('nodeStatus').value,
+            Knowledge_Intensity: document.getElementById('nodeKnowledge').value,
+            Capital_Intensity: document.getElementById('nodeCapital').value,
+            Labor_Intensity: document.getElementById('nodeLabor').value,
+            Natural_Resources_Intensity: document.getElementById('nodeNaturalResources').value,
+            Institution: document.getElementById('nodeInstitution').value,
+            Location: document.getElementById('nodeLocation').value,
+            Ownership: document.getElementById('nodeOwnership').value,
+            Volume: document.getElementById('nodeVolume').value,
+            Labor_Requirement: document.getElementById('nodeLaborRequirement').value,
+            Linkages_Support: document.getElementById('nodeLinkagesSupport').value,
+            Linkages_Value_Chain: document.getElementById('nodeLinkagesValueChain').value,
+            Launching_Schedule: document.getElementById('nodeLaunchingSchedule').value,
+            Comments: document.getElementById('nodeComments').value,
+            Random_Column_10: document.getElementById('nodeRandom10').value,
+            Random_Column_11: document.getElementById('nodeRandom11').value,
+            Value_Chain_Position: +document.getElementById('nodeValueChainPosition').value,
+            Global_Competition_Intensity: +document.getElementById('nodeGlobalCompetition').value,
+            originalX: x(+document.getElementById('nodeValueChainPosition').value),
+            originalY: y(+document.getElementById('nodeGlobalCompetition').value)
+        };
+
+        nodesData.push(newNode);
+
+    } else if (addType === 'edge') {
+        const newEdge = {
+            Source: document.getElementById('edgeSource').value,
+            Target: document.getElementById('edgeTarget').value,
+            Edge_Type: document.getElementById('edgeType').value
+        };
+
+        // Push the new edge to edgesData array
+        edgesData.push(newEdge);
+    }
+
+    // Update the chart to reflect changes
+    filterAndUpdate();
+
+    // Close the modal after saving
+    const modal = bootstrap.Modal.getInstance(document.getElementById('nodeEdgeModal'));
+    modal.hide();
+});
+
+
         function getEdgeAttributes(edge) {
             let strokeWidth, strokeColor, lineDash;
             switch (edge.Edge_Type) {
@@ -896,10 +918,10 @@ function populateNodeDropdowns() {
                 const headers = Object.keys(nodeData).filter(header => !excludeFields.includes(header));
 
             detailsTable.append("thead").append("tr")
-                .selectAll("th")
+                .selectAll("td")
                 .data(headers)
                 .enter()
-                .append("th")
+                .append("td")
                 .text(d => d);
     
             detailsTable.append("tbody").append("tr")
