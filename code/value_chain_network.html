@@ -270,31 +270,19 @@
     </select>
 </div>
 
-            <div class="mb-3 d-flex">
+            <div class="mb-3 d-flex justify-content-between">
                 <button class="btn btn-sm btn-danger me-1" id="resetFilters" title="Reset Filters">
                     <i class="fas fa-filter"></i>
                     Reset
                 </button>
                 <button class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#nodeEdgeModal" title="Add/Edit Node">
                     <i class="fas fa-plus-circle"></i>
-                    Node/Edit
+                    Add New
                 </button>
             </div>
-            
-
-            <div class="mb-3 d-flex">
-                <button class="btn btn-sm btn-primary padding-5" id="downloadNodes" title="Download Nodes CSV">
-                    <i class="fas fa-download"></i>
-                    Nodes
-                </button>
-                <button class="btn btn-sm btn-primary" id="downloadEdges" title="Download Edges CSV">
-                    <i class="fas fa-download"></i>
-                    Edges
-                </button>
-            </div>
-    
+        
                        
-            <div class="mb-3 d-flex">
+            <div class="mb-3 d-flex justify-content-between">
                 <div class="">
                     <input type="file" id="fileInputNodes" accept=".csv" class="file-input-hidden" />
                     <label for="fileInputNodes" class="btn btn-primary btn-upload">
@@ -307,7 +295,17 @@
                         <i class="fas fa-file-upload"></i> Edges 
                     </label>
                 </div>
+            </div>
 
+            <div class="mb-3 d-flex justify-content-between">
+                <button class="btn btn-sm btn-primary padding-5" id="downloadNodes" title="Download Nodes CSV">
+                    <i class="fas fa-download"></i>
+                    Nodes
+                </button>
+                <button class="btn btn-sm btn-primary" id="downloadEdges" title="Download Edges CSV">
+                    <i class="fas fa-download"></i>
+                    Edges
+                </button>
             </div>
             
         </div>
@@ -639,38 +637,68 @@ document.getElementById('addType').addEventListener('change', function() {
         populateNodeDropdowns(); // Populate the dropdowns when "Edge" is selected
     }
 });
-    
-        function renderChart(nodes, edges) {
-            g.selectAll("*").remove();
-    
-            if (nodes.length > 0) {
-                x.domain([0, d3.max(nodes, d => d.Value_Chain_Position)]).nice();
-                y.domain([0, d3.max(nodes, d => d.Global_Competition_Intensity)]).nice();
-            }
-    
-            g.append("g")
-                .attr("transform", `translate(0,${height})`)
-                .call(d3.axisBottom(x).ticks(10))
-                .attr("class", "x-axis");
-    
-            g.append("text")
-                .attr("x", width / 2)
-                .attr("y", height + margin.bottom - 10)
-                .attr("text-anchor", "middle")
-                .attr("class", "axis-label")
-                .text("Position in Value Chain (Upstream to Downstream)");
-    
-            g.append("g")
-                .call(d3.axisLeft(y).ticks(10))
-                .attr("class", "y-axis");
-    
-            g.append("text")
-                .attr("x", -(height / 2))
-                .attr("y", -margin.left + 20)
-                .attr("text-anchor", "middle")
-                .attr("class", "axis-label")
-                .attr("transform", "rotate(-90)")
-                .text("Global Competition Intensity");
+
+function renderChart(nodes, edges) {
+    g.selectAll("*").remove();
+
+// Set the domain of x and y based on nodes data if available
+if (nodes.length > 0) {
+    x.domain([0, d3.max(nodes, d => d.Value_Chain_Position)]).nice();
+    y.domain([0, d3.max(nodes, d => d.Global_Competition_Intensity)]).nice();
+}
+
+    // Define red shades from light to dark for the background sections
+    const sectionColors = ["#FFCDD2", "#E57373", "#C62828"];
+
+// Add background rectangles for three sections
+const sectionWidth = width / 3; // Divide the width by 3 for each section
+
+sectionColors.forEach((color, i) => {
+    g.append("rect")
+        .attr("x", i * sectionWidth) // Position each section along the x-axis
+        .attr("y", 0)
+        .attr("width", sectionWidth)
+        .attr("height", height)
+        .attr("fill", color)
+        .attr("opacity", 0.3); // Adjust opacity to let grid lines be visible
+});
+
+// Rest of your chart rendering code (axis, nodes, edges, etc.)
+g.append("g")
+    .attr("transform", `translate(0,${height})`)
+    .call(d3.axisBottom(x).ticks(10))
+    .attr("class", "x-axis");
+
+g.append("text")
+    .attr("x", width / 2)
+    .attr("y", height + margin.bottom - 10)
+    .attr("text-anchor", "middle")
+    .attr("class", "axis-label")
+    .text("Position in Value Chain (Upstream to Downstream)");
+
+g.append("g")
+    .call(d3.axisLeft(y).ticks(10))
+    .attr("class", "y-axis");
+
+g.append("text")
+    .attr("x", -(height / 2))
+    .attr("y", -margin.left + 20)
+    .attr("text-anchor", "middle")
+    .attr("class", "axis-label")
+    .attr("transform", "rotate(-90)")
+    .text("Global Competition Intensity");
+                svg.append("defs")
+                    .append("marker")
+                    .attr("id", "arrow")
+                    .attr("viewBox", "0 -5 10 10")
+                    .attr("refX", 10) // Adjust to position the arrowhead properly at the end of the line
+                    .attr("refY", 0)
+                    .attr("markerWidth", 6)
+                    .attr("markerHeight", 6)
+                    .attr("orient", "auto")
+                    .append("path")
+                    .attr("d", "M0,-5L10,0L0,5") // Arrow shape
+                    .attr("fill", "#333");
     
             edges.forEach(edge => {
                 const sourceNode = nodes.find(n => n.Activity === edge.Source);
@@ -689,6 +717,7 @@ document.getElementById('addType').addEventListener('change', function() {
                         .attr("stroke-width", strokeWidth)
                         .attr("stroke", strokeColor)
                         .attr("stroke-dasharray", lineDash)
+                        .attr("marker-end", "url(#arrow)")
                         .on("mouseover", function(event) {
                             tooltip.transition().duration(200).style("opacity", .9);
                             tooltip.html(`
@@ -816,7 +845,7 @@ document.getElementById('addType').addEventListener('change', function() {
                     .text(factor.slice(0, 3).toLowerCase());
             });
         }
-    // Function to populate source and target dropdowns
+// Function to populate source and target dropdowns
 function populateNodeDropdowns() {
     const sourceSelect = document.getElementById('edgeSource');
     const targetSelect = document.getElementById('edgeTarget');
