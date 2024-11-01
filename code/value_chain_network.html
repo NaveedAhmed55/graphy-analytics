@@ -129,84 +129,187 @@
         background-color: #f2f2f2;
         height: 200px;
     }
+    /* Hide the actual file input */
+.file-input-hidden {
+    display: none;
+}
+
+/* Style for the upload labels to make them look like buttons */
+.btn-upload {
+    display: inline-block;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #fff;
+    padding: 8px 12px;
+    cursor: pointer;
+    border-radius: 5px;
+    background-color: #007bff;
+    transition: background-color 0.3s ease;
+}
+
+.btn-upload:hover {
+    background-color: #0056b3;
+}
+/* Style for the Filters heading */
+.filter-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #4a90e2;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+/* Style for each filter label */
+.filter-label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #333;
+}
+
+/* Style for each filter select */
+.filter-select {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #333;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    padding: 5px;
+    background-color: #f8f9fa;
+    transition: border-color 0.3s ease;
+}
+
+.filter-select:focus {
+    border-color: #4a90e2;
+    box-shadow: 0 0 0 0.2rem rgba(74, 144, 226, 0.25);
+}
+/* Style for table headers in Node Details */
+.details-header {
+    background-color: #4a90e2;
+    color: #fff;
+    font-weight: bold;
+    padding: 8px;
+    text-align: left;
+    font-size: 0.9rem;
+    border-bottom: 2px solid #dee2e6;
+}
+
+/* Style for table cells in Node Details */
+.details-cell {
+    padding: 8px;
+    color: #333;
+    background-color: #f8f9fa;
+    font-size: 0.9rem;
+    border-bottom: 1px solid #dee2e6;
+}
+
+/* General styling for the table */
+#detailsTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+
+
+
 
     </style>
 </head>
 <body>
     <div class="main-container">
         <div class="sidebar">
-            <h4>Filters</h4>
-            <div class="mb-3">
-                <label for="statusFilter" class="form-label">Select Node Status:</label>
-                <select id="statusFilter" class="form-select">
-                    <option value="all">All</option>
-                    <option value="optimal">Optimal</option>
-                    <option value="underperforming">Underperforming</option>
-                    <option value="not_present">Not Present</option>
-                </select>
-            </div>
+            <h4 class="filter-title">Filters</h4>
 
-            <div class="mb-3">
-                <label for="knowledgeFilter" class="form-label">Select Knowledge Intensity:</label>
-                <select id="knowledgeFilter" class="form-select">
-                    <option value="all">All</option>
-                    <option value="high">High</option>
-                    <option value="medium">Medium</option>
-                    <option value="low">Low</option>
-                </select>
-            </div>
+<div class="mb-3">
+    <label for="statusFilter" class="form-label filter-label">Select Node Status:</label>
+    <select id="statusFilter" class="form-select filter-select">
+        <option value="all">All</option>
+        <option value="optimal">Optimal</option>
+        <option value="underperforming">Underperforming</option>
+        <option value="not_present">Not Present</option>
+    </select>
+</div>
 
-            <div class="mb-3">
-                <label for="capitalFilter" class="form-label">Select Capital Intensity:</label>
-                <select id="capitalFilter" class="form-select">
-                    <option value="all">All</option>
-                    <option value="high">High</option>
-                    <option value="medium">Medium</option>
-                    <option value="low">Low</option>
-                </select>
-            </div>
+<div class="mb-3">
+    <label for="knowledgeFilter" class="form-label filter-label">Select Knowledge Intensity:</label>
+    <select id="knowledgeFilter" class="form-select filter-select">
+        <option value="all">All</option>
+        <option value="high">High</option>
+        <option value="medium">Medium</option>
+        <option value="low">Low</option>
+    </select>
+</div>
 
-            <div class="mb-3">
-                <label for="laborFilter" class="form-label">Select Labor Intensity:</label>
-                <select id="laborFilter" class="form-select">
-                    <option value="all">All</option>
-                    <option value="high">High</option>
-                    <option value="medium">Medium</option>
-                    <option value="low">Low</option>
-                </select>
-            </div>
+<div class="mb-3">
+    <label for="capitalFilter" class="form-label filter-label">Select Capital Intensity:</label>
+    <select id="capitalFilter" class="form-select filter-select">
+        <option value="all">All</option>
+        <option value="high">High</option>
+        <option value="medium">Medium</option>
+        <option value="low">Low</option>
+    </select>
+</div>
 
-            <div class="mb-3">
-                <label for="naturalResourcesFilter" class="form-label">Select Natural Resources Intensity:</label>
-                <select id="naturalResourcesFilter" class="form-select">
-                    <option value="all">All</option>
-                    <option value="high">High</option>
-                    <option value="medium">Medium</option>
-                    <option value="low">Low</option>
-                </select>
-            </div>
+<div class="mb-3">
+    <label for="laborFilter" class="form-label filter-label">Select Labor Intensity:</label>
+    <select id="laborFilter" class="form-select filter-select">
+        <option value="all">All</option>
+        <option value="high">High</option>
+        <option value="medium">Medium</option>
+        <option value="low">Low</option>
+    </select>
+</div>
 
-            <div class="mb-3">
-                <button id="resetFilters" class="btn btn-danger">Reset Filters</button>
-            </div>
+<div class="mb-3">
+    <label for="naturalResourcesFilter" class="form-label filter-label">Select Natural Resources Intensity:</label>
+    <select id="naturalResourcesFilter" class="form-select filter-select">
+        <option value="all">All</option>
+        <option value="high">High</option>
+        <option value="medium">Medium</option>
+        <option value="low">Low</option>
+    </select>
+</div>
 
-            <div class="mb-3">
-                <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#nodeEdgeModal">Add Node/Edge</button>
+            <div class="mb-3 d-flex">
+                <button class="btn btn-sm btn-danger me-1" id="resetFilters" title="Reset Filters">
+                    <i class="fas fa-filter"></i>
+                    Reset
+                </button>
+                <button class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#nodeEdgeModal" title="Add/Edit Node">
+                    <i class="fas fa-plus-circle"></i>
+                    Node/Edit
+                </button>
             </div>
+            
 
-            <div class="mb-3">
-                <button class="btn btn-primary" id="downloadNodes">Download Nodes CSV</button>
-                <button class="btn btn-primary" id="downloadEdges">Download Edges CSV</button>
+            <div class="mb-3 d-flex">
+                <button class="btn btn-sm btn-primary padding-5" id="downloadNodes" title="Download Nodes CSV">
+                    <i class="fas fa-download"></i>
+                    Nodes
+                </button>
+                <button class="btn btn-sm btn-primary" id="downloadEdges" title="Download Edges CSV">
+                    <i class="fas fa-download"></i>
+                    Edges
+                </button>
             </div>
+    
+                       
+            <div class="mb-3 d-flex">
+                <div class="">
+                    <input type="file" id="fileInputNodes" accept=".csv" class="file-input-hidden" />
+                    <label for="fileInputNodes" class="btn btn-primary btn-upload">
+                        <i class="fas fa-file-upload"></i> Nodes
+                    </label>
+                </div>
+                <div class="">
+                    <input type="file" id="fileInputEdges" accept=".csv" class="file-input-hidden" />
+                    <label for="fileInputEdges" class="btn btn-primary btn-upload">
+                        <i class="fas fa-file-upload"></i> Edges 
+                    </label>
+                </div>
 
-            <div class="mb-3">
-                <input type="file" id="fileInputNodes" accept=".csv" class="form-control" />
-                <label>Upload Nodes CSV</label>
             </div>
-            <div class="mb-3">
-                <input type="file" id="fileInputEdges" accept=".csv" class="form-control" />
-                <label>Upload Edges CSV</label>
-            </div>
+            
         </div>
 
         <div class="chart-container">
@@ -899,39 +1002,43 @@ document.getElementById('saveNodeEdgeButton').addEventListener('click', function
         }
     
         function displayNodeDetails(nodeData) {
-            const detailsTable = d3.select("#detailsTable");
-            detailsTable.html("");
+    const detailsTable = d3.select("#detailsTable");
+    detailsTable.html("");
 
-                // List of fields to exclude from node details
-            const excludeFields = [
-                "Activity", 
-                "Value_Chain_Position", 
-                "Global_Competition_Intensity", 
-                "Status", 
-                "Knowledge_Intensity", 
-                "Capital_Intensity", 
-                "Labor_Intensity", 
-                "Natural_Resources_Intensity"
-            ]
+    // List of fields to exclude from node details
+    const excludeFields = [
+        "Activity", 
+        "Value_Chain_Position", 
+        "Global_Competition_Intensity", 
+        "Status", 
+        "Knowledge_Intensity", 
+        "Capital_Intensity", 
+        "Labor_Intensity", 
+        "Natural_Resources_Intensity"
+    ];
     
-             // Filter out the excluded fields
-                const headers = Object.keys(nodeData).filter(header => !excludeFields.includes(header));
+    // Filter out the excluded fields
+    const headers = Object.keys(nodeData).filter(header => !excludeFields.includes(header));
 
-            detailsTable.append("thead").append("tr")
-                .selectAll("td")
-                .data(headers)
-                .enter()
-                .append("td")
-                .text(d => d);
-    
-            detailsTable.append("tbody").append("tr")
-                .selectAll("td")
-                .data(headers.map(header => nodeData[header]))
-                .enter()
-                .append("td")
-                .text(d => d);
-        }
-    
+    // Append styled header row
+    detailsTable.append("thead").append("tr")
+        .selectAll("td")
+        .data(headers)
+        .enter()
+        .append("td")
+        .attr("class", "details-header")
+        .text(d => d);
+
+    // Append styled data row
+    detailsTable.append("tbody").append("tr")
+        .selectAll("td")
+        .data(headers.map(header => nodeData[header]))
+        .enter()
+        .append("td")
+        .attr("class", "details-cell")
+        .text(d => d);
+}
+
         function getIntensityColor(value) {
             switch (value) {
                 case "high":
